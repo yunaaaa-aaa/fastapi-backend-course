@@ -1,4 +1,6 @@
-# Before you start $不適必要的，但可以告訴別人是在終端機
+# Before you start
+
+# $不是必要的，但可以告訴別人是在終端機
 
 ```
 $ pipenv install
@@ -9,4 +11,3 @@ $ pipenv install
 ```
 $ pipenv run fastapi dev app/main.py
 ```
-
