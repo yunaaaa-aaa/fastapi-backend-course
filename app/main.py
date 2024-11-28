@@ -43,7 +43,7 @@ class TodoResponse(TodoBase):
     id:int #會自動產生
 
     class Config:
-        orm_mode = True
+       from_attributes = True
 
 #Database Injection db注入
 def get_db():
@@ -58,7 +58,7 @@ ROUTING
 '''
 #Method->toList==>post->create , read->get , put->update , delete->delete
 @app.post("/todos", response_model=TodoResponse)
-def create_todos(todo: TodoCreate,db: Session = Depends(get_db())):
+def create_todos(todo: TodoCreate,db: Session = Depends(get_db)):
     db_todo = Todo(**todo.dict())
     db.add(db_todo)#加入紀錄，但並沒有真正寫入資料庫
     db.commit()#加入資料庫
@@ -66,18 +66,18 @@ def create_todos(todo: TodoCreate,db: Session = Depends(get_db())):
     return db_todo #使用者建立資料庫後會回傳建立的結果
 
 @app.get("/todos", response_model=list[TodoResponse])#將每筆資料變成list形式
-def read_todos(db: Session = Depends(get_db())):
+def read_todos(db: Session = Depends(get_db)):
     return db.query(Todo).all() #回傳資料庫所有資料
 
 @app.get("/todo/{todo_id}",response_model=TodoResponse)#取出其中一筆
-def read_todo(todo_id: int, db: Session = Depends(get_db())):
+def read_todo(todo_id: int, db: Session = Depends(get_db)):
     db_todo = db.query(Todo).filter(Todo.id == todo_id).first()#filter -> 篩選
     if not db_todo:
         raise HTTPException(status_code=404, details="Todo not found")
     return db_todo
 
 @app.put("/todo/{todo_id}",response_model=TodoResponse)#更新一筆資料
-def updata_todo(todo_id:int ,todo:TodoCreate, db: Session = Depends(get_db())):
+def updata_todo(todo_id:int ,todo:TodoCreate, db: Session = Depends(get_db)):
     db_todo = db.query(Todo).filter(Todo.id == todo_id).first()
     if not db_todo:
         raise HTTPException(status_code=404, details="Todo not found")
@@ -88,7 +88,7 @@ def updata_todo(todo_id:int ,todo:TodoCreate, db: Session = Depends(get_db())):
     return db_todo
 
 @app.delete("/todo/{todo_id}")#刪除資料
-def delete_todo(todo_id: int, db: Session = Depends(get_db())):
+def delete_todo(todo_id: int, db: Session = Depends(get_db)):
     db_todo = db.query(Todo).filter(Todo.id == todo_id).first()
     if not db_todo:
         raise HTTPException(status_code=404, details="Todo not found")
