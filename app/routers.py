@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from .schemas import TodoCreate, TodoResponse
 from .models import Todo
 from .database import SessionLocal
+from .auth import get_current_user
 
 router = APIRouter()
 
@@ -20,7 +21,7 @@ ROUTING(路由)
 '''
 #Method->toList==>post->create , read->get , put->update , delete->delete
 @router.post("/todos", response_model=TodoResponse)
-def create_todos(todo: TodoCreate,db: Session = Depends(get_db)):
+def create_todos(todo: TodoCreate,db: Session = Depends(get_db),current_user: dict = Depends{get_current_user}):
     db_todo = Todo(**todo.dict())
     db.add(db_todo)#加入紀錄，但並沒有真正寫入資料庫
     db.commit()#加入資料庫
