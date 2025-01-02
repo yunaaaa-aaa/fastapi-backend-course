@@ -7,6 +7,7 @@ SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE__MIUTES = 30
 
+#Create JWT token
 def create_access_token(
         data : dict,
         expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE__MIUTES)):
@@ -16,6 +17,7 @@ def create_access_token(
     encode_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encode_jwt
 
+#Verify the JWT token
 def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
@@ -25,8 +27,10 @@ def verify_token(token: str):
     
 router = APIRouter()
 
+#Login route to issue JWT
 @router.post("/token")
 async def login_for_access_token(user: User):
+    # todo: check user if exist and validate password
     access_token = create_access_token(data={"sub":user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
